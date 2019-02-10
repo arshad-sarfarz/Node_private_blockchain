@@ -12,6 +12,10 @@ class Blockchain {
         this.bd = new LevelSandbox.LevelSandbox();
     }
 
+    close() {
+        return this.bd.closeLevelDB();
+    }
+
     // Helper method to create a Genesis Block (always with height= 0)
     // This method will be called inside addBlock method when height=0 
     generateGenesisBlock(){
@@ -72,10 +76,12 @@ class Blockchain {
             // Block hash with SHA256 using newBlock and converting to a string
             newBlock.hash = SHA256(JSON.stringify(newBlock)).toString();
             // Adding block object to chain
-            return this.bd.addDataToLevelDB(newBlock);
+            var result = await this.bd.addDataToLevelDB(newBlock); 
+            return JSON.parse(result);
         }
         catch(e){
             console.log(e);
+            throw e;
         }
     }
 

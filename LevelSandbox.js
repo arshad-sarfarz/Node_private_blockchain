@@ -53,17 +53,21 @@ class LevelSandbox {
           let i = 0;
           self.db.createReadStream()
           .on('data', function (data) {
-                i++;
+            i++;
             })
           .on('error', function (err) {
-              reject(err);
+            reject(err);
            })
            .on('close', function () {
-              resolve(i);
+            resolve(i);
           });          
         });
     }
 
+
+    closeLevelDB() {
+        this.db.close();
+    }
 
     addDataToLevelDB(value) {
         let self = this;
