@@ -19,11 +19,10 @@ Please run npm install to have the following prerequisites installed
 ### End Point Documentation
 
 Two end points are implemented
-1. GET /block/{indexNumber} Get Block by block index. Block index starts from 0
-   Parameters indexNumber index number of the block to be returned
+1. **GET** /block/{indexNumber} - Get Block by block index. Block index starts from 0.  
+   Parameters: indexNumber - index number of the block to be returned
 
-2. POST /block Add a new block to the Blockchain
-   The Block should be provided in the following format
+2. **POST** /block - Add a new block to the Blockchain. The Block should be provided in the following format.  
    {
      "body": "Block Data"
    }
