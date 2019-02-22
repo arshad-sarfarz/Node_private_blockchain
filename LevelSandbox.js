@@ -33,7 +33,6 @@ class LevelSandbox {
     // Add data to levelDB with key and value (Promise)
     addLevelDBData(key, value) {
         let self = this;
-        //console.log("Inside addLevelDBData. key=" + key + "    .value=" + value);
         return new Promise(function(resolve, reject) {
             self.db.put(key, value, function(err) {
                 if (err) {
@@ -61,6 +60,48 @@ class LevelSandbox {
            .on('close', function () {
             resolve(i);
           });          
+        });
+    }
+
+    // Get block by hash
+    getBlockByHash(hash) {
+        let self = this;
+        let block = null;
+        return new Promise(function(resolve, reject){
+            self.db.createValueStream()
+            .on('data', function (data) {
+                data = JSON.parse(data);
+                if(data.hash === hash){
+                    block = data;
+                }
+            })
+            .on('error', function (err) {
+                reject(err)
+            })
+            .on('close', function () {
+                resolve(block);
+            });
+        });
+    }
+
+    // Get block by hash
+    getBlockByWalletAddress(address) {
+        let self = this;
+        let block = [];
+        return new Promise(function(resolve, reject){
+            self.db.createValueStream()
+            .on('data', function (data) {
+                data = JSON.parse(data);
+                if(data.body.address === address){
+                    block.push(data);
+                }
+            })
+            .on('error', function (err) {
+                reject(err)
+            })
+            .on('close', function () {
+                resolve(block);
+            });
         });
     }
 

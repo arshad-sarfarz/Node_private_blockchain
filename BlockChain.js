@@ -100,6 +100,34 @@ class Blockchain {
         });
     }
 
+    // Get Block By Hash
+    getBlockByHash(hash) {
+        var self = this;
+        return new Promise(function(resolve, reject) {
+            self.bd.getBlockByHash(hash)
+                .then((result) =>{
+                    resolve(result);
+                })
+                .catch((err)=>{
+                    reject(err);
+                })
+        });
+    }
+
+    // Get Block By Hash
+    getBlockByWalletAddress(address) {
+        var self = this;
+        return new Promise(function(resolve, reject) {
+            self.bd.getBlockByWalletAddress(address)
+                .then((result) =>{
+                    resolve(result);
+                })
+                .catch((err)=>{
+                    reject(err);
+                })
+        });
+    }
+
     // Validate if Block is being tampered by Block Height
     validateBlock(height) {
         let self = this;
