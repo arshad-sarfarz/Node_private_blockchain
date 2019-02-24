@@ -73,6 +73,7 @@ class LevelSandbox {
                 data = JSON.parse(data);
                 if(data.hash === hash){
                     block = data;
+                    resolve(block);                    
                 }
             })
             .on('error', function (err) {

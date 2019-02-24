@@ -128,6 +128,7 @@ class BlockController {
                 validationRequest.walletAddress = request.address;
                 validationRequest.requestTimeStamp = new Date().getTime().toString().slice(0,-3);
                 validationRequest.message = request.address + ":" + validationRequest.requestTimeStamp + ":" + "starRegistry";
+                let timeLeft = 
                 validationRequest.validationWindow = 300;
                 let retVal = this.memPool.addARequestValidation(validationRequest);
                 return res.status(201).json(retVal);
@@ -171,13 +172,15 @@ class BlockController {
                 try{
                     let isValid  = this.memPool.verifyAddressRequest(newBlock.address);
                     if (!isValid){
-                        return res.status(600).json({"message" : "Address not valid"});
+                        return res.status(600).json({"message" : "Not a validated request"});
                     } else {
                         myBlockChain = new BlockChain.Blockchain();
                         let formattedBlock = {};
                         newBlock.star.story = Buffer(newBlock.star.story).toString('hex');
                         formattedBlock.body = newBlock;
                         var result = await myBlockChain.addBlock(formattedBlock);
+                        this.memPool.removeValidationRequest(newBlock.address);
+                        this.memPool.removeValidRequest(newBlock.address);
                         return res.status(201).json(result);
                     }
 

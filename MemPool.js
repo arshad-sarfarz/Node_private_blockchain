@@ -1,5 +1,5 @@
 const _ = require("lodash")
-const TimeoutRequestsWindowTime = 5*60*200;
+const TimeoutRequestsWindowTime = 5*60*1000;
 const bitcoin = require('bitcoinjs-lib')
 
 /**
@@ -27,12 +27,18 @@ class MemPool{
             return temporaryRequest.walletAddress == request.walletAddress;
         })
         if (val == null){
+            temporaryRequest.validationWindow = 300;
+            console.log("creating new request");
             this.validationRequests.push(temporaryRequest);
             this.timeoutRequests[temporaryRequest.walletAddress] = setTimeout( 
                 () => { self.removeValidationRequest(temporaryRequest.walletAddress) }, TimeoutRequestsWindowTime );
                 return temporaryRequest;
         } else {
-            //console.log("existing val");
+            console.log("reusing existing request");
+            this.verifyTimeLeft(val);
+            if (val.validationWindow < 0 ){
+                val.validationWindow = 0;
+            }
             return val;
         }
     }
@@ -67,6 +73,9 @@ class MemPool{
                     this.validRequests.push(valRequest);
                     return valRequest;
                 }
+                else {
+                    return {"message" : "signature provided is invalid"};    
+                }
             } else { 
                 return {"message" : "request expired in memPool"};    
             }
@@ -84,8 +93,8 @@ class MemPool{
     }
 
     verifyAddressRequest(addressToValidate){
-        let val = _.find(this.validationRequests,(request) => {
-            return request.walletAddress == addressToValidate;
+        let val = _.find(this.validRequests,(request) => {
+            return request.status.address == addressToValidate;
         })
         if (val != null){
             return true;
@@ -107,6 +116,15 @@ class MemPool{
         console.log(this.validationRequests);
     }
     
+    removeValidRequest(walletAddressToRemove){
+        console.log("removeValidRequest");
+        _.remove(this.validRequests,(request) => {
+            console.log(request);
+            console.log("walletAddressToRemove=" + walletAddressToRemove + "     request.walletAddress=" + request.status.address);
+            return walletAddressToRemove == request.status.address;
+        })
+        console.log(this.validationRequests);
+    }
 
 }
 
